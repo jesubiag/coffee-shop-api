@@ -1,0 +1,5 @@
+rootProject.name = 'coffeeshop'
+
+include 'coffeeshop-app'
+include 'coffeeshop-domain'
+include 'coffeeshop-infra'
