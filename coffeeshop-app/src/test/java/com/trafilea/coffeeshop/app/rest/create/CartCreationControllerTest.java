@@ -1,7 +1,5 @@
-package com.trafilea.coffeeshop.app.rest;
+package com.trafilea.coffeeshop.app.rest.create;
 
-import com.trafilea.coffeeshop.app.rest.create.CartCreationController;
-import com.trafilea.coffeeshop.app.rest.create.CartCreationJsonResponse;
 import com.trafilea.coffeeshop.cart.domain.api.CartApi;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
