@@ -1,5 +1,5 @@
 rootProject.name = 'coffeeshop'
 
 include 'coffeeshop-app'
-include 'coffeeshop-domain'
+include 'coffeeshop-cart-domain'
 include 'coffeeshop-infra'
