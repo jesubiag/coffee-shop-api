@@ -1,6 +1,7 @@
 package com.trafilea.coffeeshop.app;
 
 import com.trafilea.coffeeshop.app.rest.create.CartCreationHandler;
+import com.trafilea.coffeeshop.app.rest.create.OrderCreationHandler;
 import com.trafilea.coffeeshop.app.rest.update.AddProductsJsonRequest;
 import com.trafilea.coffeeshop.app.rest.update.CartUpdateHandler;
 import com.trafilea.coffeeshop.app.rest.update.UpdateProductJsonRequest;
@@ -30,6 +31,11 @@ public class WebConfiguration implements WebFluxConfigurer {
     }
 
     @Bean
+    public OrderCreationHandler orderCreationHandler(CartApi cartApi) {
+        return new OrderCreationHandler(cartApi);
+    }
+
+    @Bean
     public RouterFunction<ServerResponse> createCartRoute(CartCreationHandler cartCreationHandler) {
         return route(
                 POST("/users/{userId}/carts").and(accept(APPLICATION_JSON)),
@@ -53,6 +59,14 @@ public class WebConfiguration implements WebFluxConfigurer {
                 rq -> rq.bodyToMono(UpdateProductJsonRequest.class)
                         .flatMap(updateProductJsonRequest ->
                                 cartUpdateHandler.updateProduct(cartId(rq), productId(rq), updateProductJsonRequest))
+        );
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> createOrder(OrderCreationHandler orderCreationHandler) {
+        return route(
+                POST("/users/{userId}/carts/{cartId}/orders").and(accept(APPLICATION_JSON)),
+                rq -> orderCreationHandler.createOrder(cartId(rq))
         );
     }
 

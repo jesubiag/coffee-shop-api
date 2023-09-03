@@ -1,6 +1,7 @@
 package com.trafilea.coffeeshop.cart.domain.api;
 
 import com.trafilea.coffeeshop.cart.domain.presentation.AddProductsRequest;
+import com.trafilea.coffeeshop.cart.domain.presentation.CreateOrderResponse;
 import com.trafilea.coffeeshop.cart.domain.presentation.UpdateProductRequest;
 import com.trafilea.coffeeshop.cart.domain.usecase.AddProducts;
 import com.trafilea.coffeeshop.cart.domain.usecase.CreateCart;
@@ -31,4 +32,7 @@ public class CartApi {
         return updateProduct.execute(request);
     }
 
+    public Mono<CreateOrderResponse> createOrder(String cartId) {
+        return null;
+    }
 }
