@@ -2,6 +2,7 @@ package com.trafilea.coffeeshop.cart.infra.usecase;
 
 import com.trafilea.coffeeshop.InfraConfiguration;
 import com.trafilea.coffeeshop.cart.domain.model.Cart;
+import com.trafilea.coffeeshop.cart.domain.model.CartProduct;
 import com.trafilea.coffeeshop.cart.domain.model.Product;
 import com.trafilea.coffeeshop.cart.domain.presentation.AddProductsRequest;
 import com.trafilea.coffeeshop.cart.domain.presentation.CartDomainException;
@@ -50,7 +51,7 @@ public class AddProductsTest {
         StepVerifier.create(result)
                 .expectErrorMatches(throwable -> {
                     final var cartDomainException = (CartDomainException) throwable;
-                    final var validationError = ValidationError.INVALID_CART_NUMBER;
+                    final var validationError = ValidationError.INVALID_CART_ID;
                     final var cartError = cartDomainException.errors.get(0);
                     return "id".equals(cartError.field())
                             && Objects.equals(validationError.code, cartError.code())
@@ -65,8 +66,8 @@ public class AddProductsTest {
         final var userId = 123L;
         final var cartId = "cart_id";
         final var newProducts = List.of(
-                new Product("product_a", "Latte", Product.Category.Coffee, 5.25),
-                new Product("product_b", "Brush", Product.Category.Accessories, 3.5));
+                new CartProduct(new Product("product_a", "Latte", Product.Category.Coffee, 5.25), 1),
+                new CartProduct(new Product("product_b", "Brush", Product.Category.Accessories, 3.5), 2));
         final var request = new AddProductsRequest(cartId, newProducts);
 
         final var cartWithoutNewProducts = new Cart(cartId, userId, List.of());
