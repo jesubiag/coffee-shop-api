@@ -17,10 +17,11 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@WebFluxTest(CartUpdateController.class)
-public class CartUpdateControllerTest {
+@WebFluxTest(value = CartUpdateHandler.class)
+public class CartUpdateHandlerTest {
 
     @Autowired
     private WebTestClient webClient;
@@ -28,7 +29,7 @@ public class CartUpdateControllerTest {
     @MockBean
     private CartApi cartApi;
 
-    private final static String addProductsURI = "/users/{userId}/carts/{cartId}";
+    private final static String addProductsURI = "/users/{ownerId}/carts/{cartId}";
 
 
     @Test
@@ -46,7 +47,8 @@ public class CartUpdateControllerTest {
         final var validationError = ValidationError.INVALID_CART_NUMBER;
         final var nonExistentCartException = new CartDomainException(List.of(new CartError(validationError.code, "id", validationError.message)));
 
-        doThrow(nonExistentCartException).when(cartApi).addProducts(addProductsRequest);
+//        doThrow(nonExistentCartException).when(cartApi).addProducts(addProductsRequest);
+        when(cartApi.addProducts(addProductsRequest)).thenReturn(Mono.error(nonExistentCartException));
 
         // when
         final var response = webClient.post()
@@ -61,7 +63,7 @@ public class CartUpdateControllerTest {
     }
 
     @Test
-    public void shouldReturnOkWhenProductsAreCorrectlyAdded() {
+    public void shouldReturnNoContentWhenProductsAreCorrectlyAdded() {
         // given
         final var userId = 123L;
         final var cartId = "ok_cart_id";
@@ -71,6 +73,8 @@ public class CartUpdateControllerTest {
         final var productJsonCategory = productCategory.toString();
         final var addProductsRequest = new AddProductsRequest(cartId, List.of(new Product(null, productName, productCategory, productPrice)));
         final var addProductsJsonRequest = Mono.just(new AddProductsJsonRequest(List.of(new ProductJsonRequest(productName, productJsonCategory, productPrice))));
+
+        when(cartApi.addProducts(addProductsRequest)).thenReturn(Mono.empty());
 
         // when
         final var response = webClient.post()
