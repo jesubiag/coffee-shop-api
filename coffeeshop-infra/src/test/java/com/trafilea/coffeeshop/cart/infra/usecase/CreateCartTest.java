@@ -26,19 +26,19 @@ public class CreateCartTest {
     private CreateCart createCart;
 
     @Test
-    public void test() {
+    public void shouldReturnJustCreatedCartId() {
         // given
         final var userId = 123L;
-        final var emptyCart = Cart.empty(userId);
+        final var newCart = Cart.empty(userId);
         final var cartId = "new_cart_id";
-        Mockito.when(cartRepository.create(emptyCart)).thenReturn(Mono.just(cartId));
+        Mockito.when(cartRepository.create(newCart)).thenReturn(Mono.just(cartId));
 
         // when
         final var createdCartId = createCart.execute(userId);
 
         // then
         StepVerifier.create(createdCartId)
-                .assertNext(s -> Assertions.assertEquals(cartId, s))
+                .assertNext(id -> Assertions.assertEquals(cartId, id))
                 .expectComplete()
                 .verify();
     }

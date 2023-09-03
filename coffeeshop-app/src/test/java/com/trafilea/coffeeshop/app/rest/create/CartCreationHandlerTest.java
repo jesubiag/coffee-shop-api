@@ -10,8 +10,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import static org.mockito.Mockito.when;
 import static reactor.core.publisher.Mono.just;
 
-@WebFluxTest(CartCreationController.class)
-public class CartCreationControllerTest {
+@WebFluxTest(value = CartCreationHandler.class)
+public class CartCreationHandlerTest {
 
     @Autowired
     private WebTestClient webClient;
@@ -27,7 +27,7 @@ public class CartCreationControllerTest {
         when(cartApi.createCart(userId)).thenReturn(just(cartId));
 
         // when
-        final var response = webClient.post().uri("/users/{userId}/cart", userId).exchange();
+        final var response = webClient.post().uri("/users/{userId}/carts", userId).exchange();
 
         // then
         response.expectStatus().isCreated()

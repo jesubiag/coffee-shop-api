@@ -15,8 +15,9 @@ public class CreateCartImpl implements CreateCart {
 
     @Override
     public Mono<String> execute(Long userId) {
-        final var emptyCart = Cart.empty(userId);
-        return cartRepository.create(emptyCart);
+        // TODO: should check user exists?
+        final var newCart = Cart.empty(userId);
+        return cartRepository.create(newCart);
     }
 
 }
