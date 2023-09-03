@@ -3,11 +3,13 @@ package com.trafilea.coffeeshop;
 import com.trafilea.coffeeshop.cart.domain.repository.CartRepository;
 import com.trafilea.coffeeshop.cart.domain.usecase.AddProducts;
 import com.trafilea.coffeeshop.cart.domain.usecase.CreateCart;
+import com.trafilea.coffeeshop.cart.domain.usecase.CreateOrder;
 import com.trafilea.coffeeshop.cart.domain.usecase.UpdateProduct;
 import com.trafilea.coffeeshop.cart.infra.mongo.SpringMongoCartRepository;
 import com.trafilea.coffeeshop.cart.infra.repository.MongoCartRepository;
 import com.trafilea.coffeeshop.cart.infra.usecase.AddProductsImpl;
 import com.trafilea.coffeeshop.cart.infra.usecase.CreateCartImpl;
+import com.trafilea.coffeeshop.cart.infra.usecase.CreateOrderImpl;
 import com.trafilea.coffeeshop.cart.infra.usecase.UpdateProductImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +37,11 @@ public class InfraConfiguration {
     @Bean
     public UpdateProduct updateProduct(CartRepository cartRepository) {
         return new UpdateProductImpl(cartRepository);
+    }
+
+    @Bean
+    public CreateOrder createOrder(CartRepository cartRepository) {
+        return new CreateOrderImpl(cartRepository);
     }
 
 }

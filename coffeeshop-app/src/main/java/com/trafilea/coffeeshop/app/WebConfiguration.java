@@ -63,7 +63,7 @@ public class WebConfiguration implements WebFluxConfigurer {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> createOrder(OrderCreationHandler orderCreationHandler) {
+    public RouterFunction<ServerResponse> createOrderRoute(OrderCreationHandler orderCreationHandler) {
         return route(
                 POST("/users/{userId}/carts/{cartId}/orders").and(accept(APPLICATION_JSON)),
                 rq -> orderCreationHandler.createOrder(cartId(rq))
