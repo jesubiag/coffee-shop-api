@@ -20,7 +20,7 @@ public class ProductValidator {
                     if (!StringUtils.hasText(product.category().toString()))
                         validationErrors.add(ValidationError.EMPTY_FIELD);
                     if (product.price() < 0)
-                        validationErrors.add(ValidationError.NO_VALUE);
+                        validationErrors.add(ValidationError.INVALID_NUMBER);
                     }, List::addAll);
         if (!productErrors.isEmpty())
             return productErrors;

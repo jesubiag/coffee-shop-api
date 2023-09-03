@@ -7,6 +7,7 @@ import com.trafilea.coffeeshop.cart.domain.model.Product;
 import com.trafilea.coffeeshop.cart.domain.presentation.AddProductsRequest;
 import com.trafilea.coffeeshop.cart.domain.presentation.CartDomainException;
 import com.trafilea.coffeeshop.cart.domain.presentation.CartError;
+import com.trafilea.coffeeshop.cart.domain.presentation.UpdateProductRequest;
 import com.trafilea.coffeeshop.cart.domain.validators.ValidationError;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +30,6 @@ public class CartUpdateHandlerTest {
     @MockBean
     private CartApi cartApi;
 
-    private final static String addProductsURI = "/users/{ownerId}/carts/{cartId}";
-
-
     @Test
     public void shouldReturnBadRequestWhenAddingProductsToANonExistentCart() {
         // given
@@ -47,12 +45,11 @@ public class CartUpdateHandlerTest {
         final var validationError = ValidationError.INVALID_CART_NUMBER;
         final var nonExistentCartException = new CartDomainException(List.of(new CartError(validationError.code, "id", validationError.message)));
 
-//        doThrow(nonExistentCartException).when(cartApi).addProducts(addProductsRequest);
         when(cartApi.addProducts(addProductsRequest)).thenReturn(Mono.error(nonExistentCartException));
 
         // when
         final var response = webClient.post()
-                .uri(addProductsURI, userId, nonExistentCartId)
+                .uri("/users/{userId}/carts/{cartId}", userId, nonExistentCartId)
                 .body(addProductsJsonRequest, AddProductsJsonRequest.class)
                 .exchange();
 
@@ -78,13 +75,62 @@ public class CartUpdateHandlerTest {
 
         // when
         final var response = webClient.post()
-                .uri(addProductsURI, userId, cartId)
+                .uri("/users/{userId}/carts/{cartId}", userId, cartId)
                 .body(addProductsJsonRequest, AddProductsJsonRequest.class)
                 .exchange();
 
         // then
         response.expectStatus().isNoContent();
         verify(cartApi).addProducts(addProductsRequest);
+    }
+    
+    @Test
+    public void shouldReturnBadRequestWhenUpdatingProductAmountOnANonExistentCart() {
+        // given
+        final var userId = 123L;
+        final var nonExistentCartId = "non_existent_cart_id";
+        final var productId = "some_product_id";
+        final var quantity = 2;
+        final var updateProductRequest = new UpdateProductRequest(nonExistentCartId, productId, quantity);
+        final var updateProductJsonRequest = Mono.just(new UpdateProductJsonRequest(quantity));
+        final var validationError = ValidationError.INVALID_CART_NUMBER;
+        final var nonExistentCartException = new CartDomainException(List.of(new CartError(validationError.code, "id", validationError.message)));
+
+        when(cartApi.updateProduct(updateProductRequest)).thenReturn(Mono.error(nonExistentCartException));
+
+        // when
+        final var response = webClient.patch()
+                .uri("/users/{userId}/carts/{cartId}/products/{productId}", userId, nonExistentCartId, productId)
+                .body(updateProductJsonRequest, UpdateProductJsonRequest.class)
+                .exchange();
+
+        // then
+        final var errorJsonResponse = new ErrorJsonResponse("Bad request", List.of(new ErrorJson(validationError.code, "id", validationError.message)));
+        response.expectStatus().isBadRequest()
+                .expectBody(ErrorJsonResponse.class).isEqualTo(errorJsonResponse);
+    }
+
+    @Test
+    public void shouldReturnNoContentWhenProductAmountIsCorrectlyUpdated() {
+        // given
+        final var userId = 123L;
+        final var cartId = "ok_cart_id";
+        final var productId = "some_product_id";
+        final var quantity = 2;
+        final var updateProductRequest = new UpdateProductRequest(cartId, productId, quantity);
+        final var updateProductJsonRequest = Mono.just(new UpdateProductJsonRequest(quantity));
+
+        when(cartApi.updateProduct(updateProductRequest)).thenReturn(Mono.empty());
+
+        // when
+        final var response = webClient.patch()
+                .uri("/users/{userId}/carts/{cartId}/products/{productId}", userId, cartId, productId)
+                .body(updateProductJsonRequest, AddProductsJsonRequest.class)
+                .exchange();
+
+        // then
+        response.expectStatus().isNoContent();
+        verify(cartApi).updateProduct(updateProductRequest);
     }
 
 }

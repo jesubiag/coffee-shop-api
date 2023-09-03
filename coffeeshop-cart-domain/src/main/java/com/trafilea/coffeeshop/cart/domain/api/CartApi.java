@@ -1,6 +1,7 @@
 package com.trafilea.coffeeshop.cart.domain.api;
 
 import com.trafilea.coffeeshop.cart.domain.presentation.AddProductsRequest;
+import com.trafilea.coffeeshop.cart.domain.presentation.UpdateProductRequest;
 import com.trafilea.coffeeshop.cart.domain.usecase.AddProducts;
 import com.trafilea.coffeeshop.cart.domain.usecase.CreateCart;
 import reactor.core.publisher.Mono;
@@ -22,5 +23,9 @@ public class CartApi {
 
     public Mono<Void> addProducts(AddProductsRequest request) {
         return addProducts.execute(request);
+    }
+
+    public Mono<Void> updateProduct(UpdateProductRequest updateProductRequest) {
+        return null; // TODO: implement
     }
 }
