@@ -7,7 +7,7 @@ import com.trafilea.coffeeshop.cart.domain.validators.ProductIdValidator;
 import java.util.ArrayList;
 import java.util.List;
 
-public record UpdateProductRequest(String cartId, String productId, int quantity) {
+public record UpdateProductRequest(String cartId, String productId, int amount) {
 
     public static UpdateProductRequest factory(String cartId, String productId, int amount) {
         validate(cartId, productId, amount);

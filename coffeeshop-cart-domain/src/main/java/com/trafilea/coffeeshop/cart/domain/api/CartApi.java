@@ -4,20 +4,22 @@ import com.trafilea.coffeeshop.cart.domain.presentation.AddProductsRequest;
 import com.trafilea.coffeeshop.cart.domain.presentation.UpdateProductRequest;
 import com.trafilea.coffeeshop.cart.domain.usecase.AddProducts;
 import com.trafilea.coffeeshop.cart.domain.usecase.CreateCart;
+import com.trafilea.coffeeshop.cart.domain.usecase.UpdateProduct;
 import reactor.core.publisher.Mono;
 
 public class CartApi {
 
     private final CreateCart createCart;
     private final AddProducts addProducts;
+    private final UpdateProduct updateProduct;
 
-    public CartApi(CreateCart createCart, AddProducts addProducts) {
+    public CartApi(CreateCart createCart, AddProducts addProducts, UpdateProduct updateProduct) {
         this.createCart = createCart;
         this.addProducts = addProducts;
+        this.updateProduct = updateProduct;
     }
 
     public Mono<String> createCart(Long userId) {
-        // TODO: any validation?
         return createCart.execute(userId);
     }
 
@@ -25,7 +27,8 @@ public class CartApi {
         return addProducts.execute(request);
     }
 
-    public Mono<Void> updateProduct(UpdateProductRequest updateProductRequest) {
-        return null; // TODO: implement
+    public Mono<Void> updateProduct(UpdateProductRequest request) {
+        return updateProduct.execute(request);
     }
+
 }

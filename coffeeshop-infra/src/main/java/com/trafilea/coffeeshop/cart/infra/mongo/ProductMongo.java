@@ -9,12 +9,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProductMongo {
 
-    public String id;
+    private String id;
 
-    public String name;
+    private String name;
 
-    public String category;
+    private String category;
 
-    public Double price;
+    private Double price;
+
+    private Integer amount;
 
 }

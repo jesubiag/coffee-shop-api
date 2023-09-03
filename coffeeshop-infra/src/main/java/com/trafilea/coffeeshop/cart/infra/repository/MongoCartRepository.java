@@ -1,7 +1,6 @@
 package com.trafilea.coffeeshop.cart.infra.repository;
 
 import com.trafilea.coffeeshop.cart.domain.model.Cart;
-import com.trafilea.coffeeshop.cart.domain.model.Product;
 import com.trafilea.coffeeshop.cart.domain.repository.CartRepository;
 import com.trafilea.coffeeshop.cart.infra.mongo.CartMongo;
 import com.trafilea.coffeeshop.cart.infra.mongo.SpringMongoCartRepository;
@@ -26,13 +25,7 @@ public class MongoCartRepository implements CartRepository {
     @Override
     public Mono<Optional<Cart>> read(String cartId) {
         return springMongoCartRepository.findById(cartId)
-                .map(cartMongo -> {
-                    final var products = cartMongo.getProducts()
-                            .stream()
-                            .map(p -> new Product(p.id, p.name, Product.Category.valueOf(p.category), p.price))
-                            .toList();
-                    return Optional.of(new Cart(cartMongo.getId(), cartMongo.getOwnerId(), products));
-                })
+                .map(MongoCartRepository::mapCart)
                 .switchIfEmpty(Mono.just(Optional.empty()));
     }
 
@@ -42,8 +35,12 @@ public class MongoCartRepository implements CartRepository {
     }
 
     private Mono<CartMongo> mapAndSave(Cart cart) {
-        final var cartMongo = CartMongoMapper.map(cart);
+        final var cartMongo = CartMongoMapper.mapFromDomain(cart);
         return springMongoCartRepository.save(cartMongo);
+    }
+
+    private static Optional<Cart> mapCart(CartMongo cartMongo) {
+        return Optional.of(CartMongoMapper.mapToDomain(cartMongo));
     }
 
 }
