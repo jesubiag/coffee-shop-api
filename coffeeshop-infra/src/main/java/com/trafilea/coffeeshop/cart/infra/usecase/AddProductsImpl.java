@@ -28,13 +28,9 @@ public class AddProductsImpl implements AddProducts {
     }
 
     private Mono<Void> addProductsOrFail(Optional<Cart> possibleCart, List<Product> products) {
-        return possibleCart.isPresent()
-                ? addProducts(possibleCart.get(), products)
-                : Mono.error(fail());
-
-//        return possibleCart
-//                .map(cart -> addProducts(cart, products))
-//                .orElseThrow(this::fail);
+        return possibleCart
+                .map(cart -> addProducts(cart, products))
+                .orElse(fail());
     }
 
     private Mono<Void> addProducts(Cart cart, List<Product> products) {
@@ -42,9 +38,9 @@ public class AddProductsImpl implements AddProducts {
         return cartRepository.update(cartWithNewProducts);
     }
 
-    private CartDomainException fail() {
+    private Mono<Void> fail() {
         final var validationError = ValidationError.INVALID_CART_NUMBER;
-        return new CartDomainException(List.of(new CartError(validationError.code, "id", validationError.message)));
+        return Mono.error(new CartDomainException(List.of(new CartError(validationError.code, "id", validationError.message))));
     }
 
 }
